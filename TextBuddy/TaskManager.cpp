@@ -59,18 +59,24 @@ void TaskManager::executeCommand(vector<string> tokens) {
 		// todo:
 		// solve edge cases
 		int taskNumber = atoi(tokens[1].c_str()) - 1;
-		cout << "Deleting task: " +  tasks[taskNumber].title << endl;
+		respondWithMessage("Deleting task: " +  tasks[taskNumber].title);
 		tasks.erase(tasks.begin() + taskNumber);
 	} else {
 		if (command != "help") {
-			cout << "command not recognized: " + command << endl; 
+			respondWithMessage("Command not recognized: " + command);
 		}
-		cout << "available commands: help, add <task>, delete <task number>, display, clear, exit, save, reload" << endl;
+
+		respondWithMessage(HELP_MESSAGE);
 	}
 	return;
 }
 
 // Private methods
+
+void TaskManager::respondWithMessage(string message) {
+	cout << message << endl;
+	return;
+}
 
 void TaskManager::writeToFile() {
     ofstream o;
