@@ -15,7 +15,7 @@ using namespace std;
 #include "boost/tokenizer.hpp"
 
 #define PROMPT_UNSAVED         "command *: "
-#define PROMPT_SAVED		   "command: "
+#define PROMPT_SAVED           "command: "
 #define HELP_MESSAGE           "available commands: help, add <task>, delete <task number>, display, clear, exit, save, reload"
 #define COMMAND_NOT_RECOGNIZED "Command not recognized. Type \"help\" to see full list of commands."
 #define UNSAVED_CHANGES        "You have unsaved changes. Do you want to save them? [y]es/[n]o/[c]ancel"
@@ -151,7 +151,7 @@ void TaskManager::add(string title) {
 }
 
 /**
-    @param the number of the task to be added (1-index)
+    @param the number of the task to be deleted (1-index)
 */
 void TaskManager::del(int taskNumber) {
     if (taskNumber == INVALID_TASK_NUMBER) {
