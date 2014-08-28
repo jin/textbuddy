@@ -19,15 +19,14 @@ typedef struct Task {
 
 class TaskManager {
 private:
-	// Main vector to store tasks during runtime
-    std::vector<Task> tasks;
+    std::vector<Task> tasks; // Main vector to store tasks during runtime
     std::string filename;
-	bool saved;
+    bool saved;
 
     void clearInput();
     void writeToFile();
     void loadFromFile();
-	void respondWithMessage(std::string message);
+    void respondWithMessage(std::string message);
     void display();
     void clear();
     void add(std::string title);
@@ -35,15 +34,15 @@ private:
     void exit();
     void loop();
 
-	int promptToSave();
+    int promptToSave();
 
-	std::string extractTaskTitleFromTokens(std::vector<std::string> tokens);
-	int extractTaskNumberFromTokens(std::vector<std::string> tokens);
+    std::string extractTaskTitleFromTokens(std::vector<std::string> tokens);
+    int extractTaskNumberFromTokens(std::vector<std::string> tokens);
     std::vector<std::string> tokenize(std::string s);
     
 public:
     TaskManager(std::string filename);
 
-	void init();
-	void executeCommand(std::string commandLine);
+    void init();
+    void executeCommand(std::string commandLine);
 };

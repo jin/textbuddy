@@ -99,6 +99,10 @@
 
 using namespace std;
 
+/**
+    Create an empty file to store the tasks on disk.
+    @param path to file.
+*/
 void createTaskFile(string filename){
     cout << "Creating file: " << filename << "\n";
     
@@ -110,32 +114,39 @@ void createTaskFile(string filename){
     cout << "File created." << endl;
 }
 
+/**
+    @param path to file.
+    @return true if file with filename exists, false otherwise.
+*/
 bool isFileCreated(string filename){
     ifstream i(filename);
 
-	// Assign the value to a variable instead of returning i.good()
-	// is to allow the closing of ifstream i.
-	bool isCreated = i.good();
-	i.close();
+    // Assign the value to a variable instead of returning i.good()
+    // is to allow the closing of ifstream i.
+    bool isCreated = i.good();
+    i.close();
 
     return isCreated;
 }
 
+/**
+    @param integer representing number of arguments
+*/
 void exitIfNoArguments(int argCount) {
     if (argCount < 2) {
         cerr << "Please input the name of the task file" << endl;
-		exit(1);
+        exit(1);
     }
 }
 
 int main(int argc, const char * argv[]){
-	exitIfNoArguments(argc);
+    exitIfNoArguments(argc);
     
     string filename = argv[1];
     if (isFileCreated(filename) == 0) { createTaskFile(filename); }
     
     TaskManager taskManager = TaskManager(filename);
-	taskManager.init();
+    taskManager.init();
     
     return 0;
 }
