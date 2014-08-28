@@ -6,13 +6,16 @@
 //  Copyright (c) 2014 CryptApps. All rights reserved.
 //
 
+using namespace std;
+
 #include <fstream>
 #include <sstream>
 
 #include "TaskManager.h"
 #include "boost/tokenizer.hpp"
 
-using namespace std;
+#define HELP_MESSAGE "available commands: help, add <task>, delete <task number>, display, clear, exit, save, reload"
+
 
 TaskManager::TaskManager(string _filename) {
     filename = _filename;
