@@ -23,16 +23,18 @@ private:
     std::string filename;
     bool saved;
 
-    void clearInput();
+    void loop();
+    void executeCommand(std::string commandLine);
+
     void writeToFile();
     void loadFromFile();
-    void respondWithMessage(std::string message);
-    void display();
-    void clear();
     void add(std::string title);
     void del(int id);
+    void display();
+    void clear();
     void exit();
-    void loop();
+    void respondWithMessage(std::string message);
+    void clearInput();
 
     int promptToSave();
 
@@ -42,7 +44,5 @@ private:
     
 public:
     TaskManager(std::string filename);
-
     void init();
-    void executeCommand(std::string commandLine);
 };
