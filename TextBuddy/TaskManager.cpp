@@ -14,70 +14,88 @@ using namespace std;
 #include "TaskManager.h"
 #include "boost/tokenizer.hpp"
 
-#define HELP_MESSAGE "available commands: help, add <task>, delete <task number>, display, clear, exit, save, reload"
+#define PROMPT_UNSAVED         "command *: "
+#define PROMPT_SAVED		   "command: "
+#define HELP_MESSAGE           "available commands: help, add <task>, delete <task number>, display, clear, exit, save, reload"
+#define COMMAND_NOT_RECOGNIZED "Command not recognized. Type \"help\" to see full list of commands."
+#define UNSAVED_CHANGES        "You have unsaved changes. Do you want to save them? [y]es/[n]o/[c]ancel"
+#define DELETED_ALL_TASKS      "Deleted all tasks. Please type \"save\" to confirm."
 
+#define INVALID_TASK_NUMBER -1
 
+#define PROCEED 0
+#define CANCEL 1
+
+/**
+	TaskManager constructor.
+    @param the filename of the tasks file.
+*/
 TaskManager::TaskManager(string _filename) {
     filename = _filename;
     loadFromFile();
-    loop();
 }
 
-// This is the main IO loop.
-// Gets an input line, splits them up into tokens, 
-// and passes the tokens into executeCommand()
-void TaskManager::loop() {
-    string command;
-    vector<string> tokens;
-    while (true) {
-        cout << "command: ";
-        getline(cin, command);
-		tokens = tokenize(command);
-		executeCommand(tokens);
-    }
-}
+/**
+	Tokenize and extract the command action from the command line. 
+	Executes the action if it is one of the options, if not, prompt the user.
+    @param the command line to be parsed
+*/
+void TaskManager::executeCommand(string commandLine) {
+	vector<string> tokens = tokenize(commandLine);
+	if (tokens.empty()) { return; }
 
-void TaskManager::executeCommand(vector<string> tokens) {
-	if (tokens.size() == 0) {
-		return;
-	}
+	// std::string does not work well with switch case.
+	// See http://stackoverflow.com/questions/650162/why-switch-statement-cannot-be-applied-on-strings 
 
 	string command = tokens[0];
-	if (command == "display") {
-		display();
-	} else if (command == "clear") {
-		clear();
-	} else if (command == "exit") {
-		exit();
-	} else if (command == "save") {
-		writeToFile();
-	} else if (command == "reload") {
-		loadFromFile();
-	} else if (command == "add") {
-		add(extractTaskFromTokens(tokens));
-	} else if (command == "delete") {
-		// todo:
-		// solve edge cases
-		int taskNumber = atoi(tokens[1].c_str()) - 1;
-		respondWithMessage("Deleting task: " +  tasks[taskNumber].title);
-		tasks.erase(tasks.begin() + taskNumber);
-	} else {
-		if (command != "help") {
-			respondWithMessage("Command not recognized: " + command);
-		}
+	if      (command == "display") { display(); } 
+	else if (command == "clear")   { clear(); } 
+	else if (command == "exit")    { exit(); } 
+	else if (command == "save")    { writeToFile(); } 
+	else if (command == "reload")  { loadFromFile(); } 
+	else if (command == "add")     { add(extractTaskTitleFromTokens(tokens)); } 
+	else if (command == "delete")  { del(extractTaskNumberFromTokens(tokens)); } 
+	else if (command == "help")    { respondWithMessage(HELP_MESSAGE); } 
+	else                           { respondWithMessage(COMMAND_NOT_RECOGNIZED); }
+}
 
-		respondWithMessage(HELP_MESSAGE);
-	}
-	return;
+void TaskManager::init() {
+	loop();
 }
 
 // Private methods
 
-void TaskManager::respondWithMessage(string message) {
-	cout << message << endl;
-	return;
+/**
+	The main IO loop of the program. 
+*/
+void TaskManager::loop() {
+    string command;
+    while (true) {
+		if (saved) { cout << PROMPT_SAVED; }
+		else { cout << PROMPT_UNSAVED; };
+
+        getline(cin, command);
+		executeCommand(command);
+    }
 }
 
+/**
+	This method allows the message to be forwarded to different outputs.
+
+    @param the message string to be displayed to the user.
+*/
+void TaskManager::respondWithMessage(string message) {
+	cout << message << endl;
+}
+
+/**
+	Saves all the tasks in memory to the specified file, effectively
+	overwriting the file.
+
+	If there are unsaved changes in memory and this method is not called,
+	the changes will be lost when the program exits, or when loadFromFile() 
+	is called.
+*/
 void TaskManager::writeToFile() {
     ofstream o;
     o.open(filename);
@@ -87,101 +105,167 @@ void TaskManager::writeToFile() {
     }
     
     o.close();
-	cout << "Saved!" << endl;
+	respondWithMessage("Saved to " + filename);
+	saved = true;
 }
 
+/**
+	Loads tasks from specified file, overwriting the tasks in memory.
+*/
 void TaskManager::loadFromFile() {
+	if (!saved && promptToSave() == CANCEL) { return; }
+
     ifstream i;
     i.open(filename);
-    if (i.is_open() == false) {
-        cerr << "File cannot be opened" << endl;
-    }
+    if (!i.is_open()) { cerr << "The file cannot be opened." << endl; }
     
     string taskTitle;
     tasks.clear();
     while (getline(i, taskTitle)) {
-        add(taskTitle);
+		Task task;
+		task.title = taskTitle;
+		tasks.push_back(task);
     }
     
     i.close();
 
-	cout << "Reloaded!" << endl;
+	respondWithMessage("Loaded " + filename);
+	saved = true;
 }
 
+/**
+    @param the name of the task to be added
+*/
 void TaskManager::add(string title) {
-	if (title == "") {
-		cout << "Cannot add an empty task." << endl;
+	if (title.empty()) {
+		respondWithMessage("Please enter a task.");
 		return;
 	}
 
     Task task;
     task.title = title;
     tasks.push_back(task);
+
+	respondWithMessage("Added task: " + task.title);
+	saved = false;
 }
 
-void TaskManager::del(int id) {
-    cout << "deleted from " + filename + ": \"" + tasks[id - 1].title + "\"" << endl;
-    tasks.erase(tasks.begin() + id - 1);
+/**
+    @param the number of the task to be added (1-index)
+*/
+void TaskManager::del(int taskNumber) {
+	if (taskNumber == INVALID_TASK_NUMBER) {
+		respondWithMessage("Invalid task number. Please try again.");
+		return;
+	}
+    respondWithMessage("Deleting task: " + tasks[taskNumber].title);
+	tasks.erase(tasks.begin() + taskNumber);
+	saved = false;
 }
 
-// Delete all tasks from memory
+/**
+	Delete all tasks from memory (not disk)
+*/
 void TaskManager::clear() {
-    cout << "all content deleted from " + filename << endl;
     tasks.clear();
+    respondWithMessage(DELETED_ALL_TASKS);
+	saved = false;
 }
 
+/**
+	Displays all tasks in memory in an ordered list, starting from 1.
+*/
 void TaskManager::display() {
-    if ( tasks.size() == 0 ) {
-        cout << filename + " is empty" << endl;
+    if (tasks.empty()) {
+		respondWithMessage(filename + " is empty");
     } else {
+		// C++ array index begin with 0, but the display index begins from 1.
         int idx = 1;
-        for ( auto &i : tasks ) {
-            cout << to_string(idx) + ": " + i.title << endl;
+        for (auto &i : tasks) {
+			respondWithMessage(to_string(idx) + ": " + i.title);
             idx++;
         }
     }
 }
 
+/**
+	Prompt the user that the tasks in memory have changed but not saved to disk yet.
+
+    @return an integer constant that determines if the method caller should PROCEED or CANCEL the next action. 
+*/
+int TaskManager::promptToSave() {
+	string response;
+
+	while (true) {
+		cout << UNSAVED_CHANGES << " ";  
+		getline(cin, response);
+		if      (response == "y" || response == "Y" || response == "yes")    { writeToFile(); return PROCEED; } 
+		else if (response == "n" || response == "N" || response == "no")     { return PROCEED; } 
+		else if (response == "c" || response == "C" || response == "cancel") { return CANCEL; }
+	}
+}
+
+/**
+	Prompt user to save changes before exit.
+*/
 void TaskManager::exit() {
-    ::exit(0);
+	if (!saved && promptToSave() == CANCEL) { return; }
+	else { ::exit(0); };
 }
 
 // Helper methods
 
-string TaskManager::extractTaskFromTokens(vector<string> tokens) {
-	string task;
-	for (unsigned i = 1; i < tokens.size(); i++) {
-		task = task + tokens[i];
-		if (i != tokens.size() - 1) { task = task + " "; }
-	}
+/**
+	Used by TaskManager::del()
 
-	return task;
+    @param the tokenized command line
+    @return an integer that represents a task number, or an INVALID_TASK_NUMBER if 
+	it is not specified, or if it's out of range.
+*/
+int TaskManager::extractTaskNumberFromTokens(vector<string> tokens) {
+	if (tokens.size() == 1) { return INVALID_TASK_NUMBER; } 
+
+	int taskNumber = atoi(tokens[1].c_str()) - 1;
+	if (taskNumber == 0 || taskNumber > tasks.size()) {
+		return INVALID_TASK_NUMBER;
+	} else {
+		return taskNumber;
+	}
 }
 
+/**
+	Used by TaskManager::add()
 
-// Split a string into individual tokens, separated by whitespace.
-vector<string>TaskManager::split(string s) {
-    
+    @param the tokenized command line
+    @return a string that represents the title of the task. 
+*/
+// Separate the task title from the tokenized command string.
+// @returns
+
+string TaskManager::extractTaskTitleFromTokens(vector<string> tokens) {
+	string taskTitle;
+
+	// Join task words into a string
+	for (unsigned i = 1; i < tokens.size(); i++) {
+		taskTitle = taskTitle + tokens[i];
+		if (i != tokens.size() - 1) { taskTitle = taskTitle + " "; }
+	}
+
+	return taskTitle;
+}
+
+/**
+	Split a string into individual tokens. Separated by whitespace.
+
+    @param the string to be tokenized
+    @return the tokenized string 
+*/
+vector<string>TaskManager::tokenize(string s) {
     vector<string> tokens;
-    
-    typedef string::size_type string_size;
-    string_size i = 0;
-    
-    while (i != s.size()) {
-        while (i != s.size() && isspace(s[i])) {
-            ++i;
-        }
-        
-        string_size j = i;
-        while (j != s.size() && !isspace(s[j])) {
-            j++;
-        }
-        
-        if (i != j) {
-            tokens.push_back(s.substr(i, j - i));
-            i = j;
-        }
+	boost::char_separator<char> sep(" ");
+	boost::tokenizer<boost::char_separator<char>> tok(s, sep);
+	for (const auto& t : tok) {
+		tokens.push_back(t);
     }
-    
     return tokens;
 }

@@ -5,6 +5,10 @@
 //  Created by jin on 13/8/14.
 //  Copyright (c) 2014 CryptApps. All rights reserved.
 //
+//  This is the main TaskManager class that defines the methods 
+//  and variables used for task management. 
+//  
+//  CRUD, save and loading are supported.
 
 #include <iostream>
 #include <vector>
@@ -14,31 +18,32 @@ typedef struct Task {
 } Task;
 
 class TaskManager {
-    
 private:
 	// Main vector to store tasks during runtime
     std::vector<Task> tasks;
     std::string filename;
-
-    std::vector<std::string> tokenize(std::string s);
+	bool saved;
 
     void clearInput();
     void writeToFile();
     void loadFromFile();
-
 	void respondWithMessage(std::string message);
-    
     void display();
     void clear();
     void add(std::string title);
     void del(int id);
     void exit();
+    void loop();
 
-	std::string extractTaskFromTokens(std::vector<std::string> tokens);
+	int promptToSave();
+
+	std::string extractTaskTitleFromTokens(std::vector<std::string> tokens);
+	int extractTaskNumberFromTokens(std::vector<std::string> tokens);
+    std::vector<std::string> tokenize(std::string s);
     
 public:
     TaskManager(std::string filename);
-    
-    void loop();
-	void executeCommand(std::vector<std::string> tokens);
+
+	void init();
+	void executeCommand(std::string commandLine);
 };
