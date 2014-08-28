@@ -1,95 +1,93 @@
+// main.cpp
+// TextBuddy
+
+// Created by jin on 13/8/14.
+// Copyright (c) 2014 CryptApps. All rights reserved.
+
+// This program lets you manage your TODO tasks in the command line interface.
 //
-//  main.cpp
-//  TextBuddy
+// No installation is required to run the program.
 //
-//  Created by jin on 13/8/14.
-//  Copyright (c) 2014 CryptApps. All rights reserved.
+// Building dependencies: 
+// 1) c++ boost library in include path.
 //
-//  This program lets you manage your TODO tasks in the command line interface.
+// Usage:
+// TextBuddy.exe tasks.txt 
+// TextBuddy.exe C:\\Users\foo\Desktop\todo.txt
+//
+// The only argument is the location of the plaintext file where the tasks are saved. 
+//
+// At startup, tasks from the file are loaded into memory, one by one.
+//
+// The prompt will change from "command:" to "command *:" if there are unsaved changes.
+//
+// Commands:
+// 
+// - help
+// Show the list of available commands.
+//
+// Example:
+// command: help
+// available commands: help, add <task>, delete <task number>, display, clear, exit, save, reload
+//
+//-------------------------------------
+//
+// - display
+// Shows all tasks that are loaded in memory. 
+//
+// Example:
+// command: display
+// 1: buy milk
+// 2: walk the dog
+//
+//-------------------------------------
+//
+// - add <task>
+// Add a task to memory.
+//
+// Example:
+// command: add walk the dog
+// Added task to Tasks.txt: walk the dog 
+//
+//-------------------------------------
+//
+// - delete <task number>
+// Delete a task from memory specified by the task number, starting from 0.
 //  
-//  No installation is required.
-//  
-//  Building dependencies: 
-//  1) c++ boost library in include path.
-//  
-//  Usage:
-//  TextBuddy.exe tasks.txt 
-//  TextBuddy.exe C:\\Users\foo\Desktop\todo.txt
-//  
-//  The only argument is the location of the plaintext file where the tasks are saved. 
-//  
-//	At startup, tasks from the file are loaded into memory, one by one.
-//  
-//	The prompt will change from "command:" to "command *:" if there are unsaved changes.
+// Example: 
+// command: delete 1
+// Deleting task: buy milk
 //
-//  Commands:
+//-------------------------------------
+// - clear 
+// Clears all tasks in the memory 
 //
-//  - help
-//  Show the list of available commands.
+// Example:
+// command: clear
+// all content deleted from Tasks.txt
 //
-//	Example:
-//	command: help
-//	available commands: help, add <task>, delete <task number>, display, clear, exit
-//	, save, reload
+//-------------------------------------
 //
-//  -------------------------------------
+// - save
+// Saves tasks in memory to the file on disk. This overwrites the file contents.
 //
-//  - display
-//	Shows all tasks that are loaded in memory. 
+// Example:
+// command: save
+// Saved!
 //
-//	Example:
-//	command: display
-//	1: buy milk
-//	2: walk the dog
+//-------------------------------------
 //
-//  -------------------------------------
+// - reload
+// Overwrites the tasks in memory with the tasks from the specified file.
 //
-//  - add <task>
-//  Add a task to memory.
+// Example:
+// command: reload 
+// Loaded!
 //
-//  Example:
-//  command: add walk the dog
-//  Added task to Tasks.txt: walk the dog 
-//
-//  -------------------------------------
-//
-//  - delete <task number>
-//  Delete a task from memory specified by the task number, starting from 0.
-//	
-//	Example: 
-//	command: delete 1
-//	Deleting task: buy milk
-//
-//  -------------------------------------
-//  - clear 
-//  Clears all tasks in the memory 
-//
-//	Example:
-//	command: clear
-//  all content deleted from Tasks.txt
-//
-//  -------------------------------------
-//
-//  - save
-//	Saves tasks in memory to the file on disk. This overwrites the file contents.
-//   
-//	Example:
-//	command: save
-//	Saved!
-//
-//  -------------------------------------
-//
-//  - reload
-//  Overwrites the tasks in memory with the tasks from the specified file.
-//  
-//	Example:
-//	command: reload 
-//	Loaded!
-//
-//  -------------------------------------
-//   
-//  - exit  
-//  Exits the application.
+// -------------------------------------
+// 
+// - exit  
+// Exits the application.
 
 #include <iostream>
 #include <fstream>
