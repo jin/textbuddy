@@ -226,7 +226,7 @@ int TaskManager::extractTaskNumberFromTokens(vector<string> tokens) {
     if (tokens.size() == 1) { return INVALID_TASK_NUMBER; } 
 
     int taskNumber = atoi(tokens[1].c_str()) - 1;
-    if (taskNumber == 0 || taskNumber > tasks.size()) {
+    if (taskNumber <= 0 || taskNumber > tasks.size()) {
         return INVALID_TASK_NUMBER;
     } else {
         return taskNumber;
