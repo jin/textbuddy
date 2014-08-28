@@ -4,6 +4,7 @@
 //
 //  Created by jin on 13/8/14.
 //  Copyright (c) 2014 CryptApps. All rights reserved.
+//
 
 #include <iostream>
 #include <vector>
@@ -13,16 +14,19 @@ typedef struct Task {
 } Task;
 
 class TaskManager {
+    
+private:
 	// Main vector to store tasks during runtime
     std::vector<Task> tasks;
     std::string filename;
-    
-private:
-    std::vector<std::string> split(std::string s);
+
+    std::vector<std::string> tokenize(std::string s);
 
     void clearInput();
     void writeToFile();
     void loadFromFile();
+
+	void respondWithMessage(std::string message);
     
     void display();
     void clear();
