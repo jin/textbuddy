@@ -23,17 +23,16 @@ TaskManager::TaskManager(string _filename) {
     loop();
 }
 
-
 // This is the main IO loop.
 // Gets an input line, splits them up into tokens, 
 // and passes the tokens into executeCommand()
 void TaskManager::loop() {
-    string commands, command;
+    string command;
     vector<string> tokens;
     while (true) {
         cout << "command: ";
-        getline(cin, commands);
-		tokens = split(commands);
+        getline(cin, command);
+		tokens = tokenize(command);
 		executeCommand(tokens);
     }
 }
