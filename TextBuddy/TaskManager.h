@@ -21,7 +21,6 @@ class TaskManager {
 private:
     std::vector<Task> tasks; // Main vector to store tasks during runtime
     std::string filename;
-    bool saved;
 
     void loop();
     void executeCommand(std::string commandLine);
@@ -35,8 +34,6 @@ private:
     void exit();
     void respondWithMessage(std::string message);
     void clearInput();
-
-    int promptToSave();
 
     std::string extractTaskTitleFromTokens(std::vector<std::string> tokens);
     int extractTaskNumberFromTokens(std::vector<std::string> tokens);

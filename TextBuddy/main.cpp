@@ -16,10 +16,8 @@
 // TextBuddy.exe C:\\Users\foo\Desktop\todo.txt
 //
 // The only argument is the location of the plaintext file where the tasks are saved. 
-//
 // At startup, tasks from the file are loaded into memory, one by one.
-//
-// The prompt will change from "command:" to "command *:" if there are unsaved changes.
+// After every command input, the tasks are saved automatically to the file.
 //
 // Commands:
 // 
@@ -28,12 +26,12 @@
 //
 // Example:
 // command: help
-// available commands: help, add <task>, delete <task number>, display, clear, exit, save, reload
+// available commands: help, add <task>, delete <task number>, display, clear, exit.
 //
 //-------------------------------------
 //
 // - display
-// Shows all tasks that are loaded in memory. 
+// Shows all tasks.
 //
 // Example:
 // command: display
@@ -43,7 +41,7 @@
 //-------------------------------------
 //
 // - add <task>
-// Add a task to memory.
+// Add a task.
 //
 // Example:
 // command: add walk the dog
@@ -52,7 +50,7 @@
 //-------------------------------------
 //
 // - delete <task number>
-// Delete a task from memory specified by the task number, starting from 0.
+// Delete a task specified by the task number, starting from 0.
 //  
 // Example: 
 // command: delete 1
@@ -60,31 +58,13 @@
 //
 //-------------------------------------
 // - clear 
-// Clears all tasks in the memory 
+// Deletes all tasks.
 //
 // Example:
 // command: clear
 // all content deleted from Tasks.txt
 //
 //-------------------------------------
-//
-// - save
-// Saves tasks in memory to the file on disk. This overwrites the file contents.
-//
-// Example:
-// command: save
-// Saved!
-//
-//-------------------------------------
-//
-// - reload
-// Overwrites the tasks in memory with the tasks from the specified file.
-//
-// Example:
-// command: reload 
-// Loaded!
-//
-// -------------------------------------
 // 
 // - exit  
 // Exits the application.
@@ -102,7 +82,7 @@ using namespace std;
     @param path to file.
 */
 void createTaskFile(string filename){
-    cout << "Creating file: " << filename << "\n";
+    cout << "Creating file: " << filename << endl;
     
     fstream f;
     f.open(filename, fstream::out);
@@ -141,7 +121,7 @@ int main(int argc, const char * argv[]){
     exitIfNoArguments(argc);
     
     string filename = argv[1];
-    if (isFileCreated(filename) == 0) { createTaskFile(filename); }
+    if (!isFileCreated(filename)) { createTaskFile(filename); }
     
     TaskManager taskManager = TaskManager(filename);
     taskManager.init();

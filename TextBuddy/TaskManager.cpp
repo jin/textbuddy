@@ -14,17 +14,14 @@ using namespace std;
 #include "TaskManager.h"
 #include "boost/tokenizer.hpp"
 
-#define MESSAGE_PROMPT_UNSAVED         "command *: "
 #define MESSAGE_PROMPT_SAVED           "command: "
-#define MESSAGE_HELP                   "available commands: help, add <task>, delete <task number>, display, clear, exit, save, reload"
+#define MESSAGE_HELP                   "commands: help, add <task>, delete <task number>, display, clear, exit"
 #define MESSAGE_COMMAND_NOT_RECOGNIZED "Command not recognized. Type \"help\" to see full list of commands."
-#define MESSAGE_UNSAVED_CHANGES        "You have unsaved changes. Do you want to save them? [y]es/[n]o/[c]ancel"
-#define MESSAGE_DELETED_ALL_TASKS      "Deleted all tasks. Please type \"save\" to confirm."
+#define MESSAGE_DELETED_ALL_TASKS      "Deleted all tasks."
+#define MESSAGE_INVALID_TASK_NUMBER    "Invalid task number. Please try again."
+#define MESSAGE_FILE_UNOPENABLE        "File cannot be opened."
 
 #define INVALID_TASK_NUMBER -1
-
-#define PROCEED 0
-#define CANCEL 1
 
 /**
     TaskManager constructor.
@@ -50,11 +47,10 @@ void TaskManager::init() {
 void TaskManager::loop() {
     string command;
     while (true) {
-        if (saved) { cout << MESSAGE_PROMPT_SAVED; }
-        else { cout << MESSAGE_PROMPT_UNSAVED; };
-
+        cout << MESSAGE_PROMPT_SAVED;
         getline(cin, command);
         executeCommand(command);
+        writeToFile();
     }
 }
 
@@ -74,8 +70,6 @@ void TaskManager::executeCommand(string commandLine) {
     if      (command == "display") { display(); } 
     else if (command == "clear")   { clear(); } 
     else if (command == "exit")    { exit(); } 
-    else if (command == "save")    { writeToFile(); } 
-    else if (command == "reload")  { loadFromFile(); } 
     else if (command == "add")     { add(extractTaskTitleFromTokens(tokens)); } 
     else if (command == "delete")  { del(extractTaskNumberFromTokens(tokens)); } 
     else if (command == "help")    { respondWithMessage(MESSAGE_HELP); } 
@@ -108,19 +102,15 @@ void TaskManager::writeToFile() {
     }
     
     o.close();
-    respondWithMessage("Saved to " + filename);
-    saved = true;
 }
 
 /**
     Loads tasks from specified file, overwriting the tasks in memory.
 */
 void TaskManager::loadFromFile() {
-    if (!saved && promptToSave() == CANCEL) { return; }
-
     ifstream i;
     i.open(filename);
-    if (!i.is_open()) { cerr << "The file cannot be opened." << endl; }
+    if (!i.is_open()) { cerr << MESSAGE_FILE_UNOPENABLE << endl; }
     
     string taskTitle;
     tasks.clear();
@@ -132,8 +122,7 @@ void TaskManager::loadFromFile() {
     
     i.close();
 
-    respondWithMessage("Loaded " + filename);
-    saved = true;
+    respondWithMessage("Welcome to TextBuddy. " + filename + " is ready for use.");
 }
 
 /**
@@ -149,8 +138,7 @@ void TaskManager::add(string title) {
     task.title = title;
     tasks.push_back(task);
 
-    respondWithMessage("Added task: " + task.title);
-    saved = false;
+    respondWithMessage("Added task to " + filename + ": " + task.title);
 }
 
 /**
@@ -158,12 +146,11 @@ void TaskManager::add(string title) {
 */
 void TaskManager::del(int taskNumber) {
     if (taskNumber == INVALID_TASK_NUMBER) {
-        respondWithMessage("Invalid task number. Please try again.");
+        respondWithMessage(MESSAGE_INVALID_TASK_NUMBER);
         return;
     }
-    respondWithMessage("Deleting task: " + tasks[taskNumber].title);
+    respondWithMessage("Deleting task from " + filename + ": " + tasks[taskNumber].title);
     tasks.erase(tasks.begin() + taskNumber);
-    saved = false;
 }
 
 /**
@@ -172,7 +159,6 @@ void TaskManager::del(int taskNumber) {
 void TaskManager::clear() {
     tasks.clear();
     respondWithMessage(MESSAGE_DELETED_ALL_TASKS);
-    saved = false;
 }
 
 /**
@@ -181,30 +167,14 @@ void TaskManager::clear() {
 void TaskManager::display() {
     if (tasks.empty()) {
         respondWithMessage(filename + " is empty");
-    } else {
-        // C++ array index begin with 0, but the display index begins from 1.
-        int idx = 1;
-        for (auto &i : tasks) {
-            respondWithMessage(to_string(idx) + ": " + i.title);
-            idx++;
-        }
-    }
-}
+        return;
+    } 
 
-/**
-    Prompt the user that the tasks in memory have changed but not saved to disk yet.
-
-    @return an integer constant that determines if the method caller should PROCEED or CANCEL the next action. 
-*/
-int TaskManager::promptToSave() {
-    string response;
-
-    while (true) {
-        cout << MESSAGE_UNSAVED_CHANGES << " ";  
-        getline(cin, response);
-        if      (response == "y" || response == "Y" || response == "yes")    { writeToFile(); return PROCEED; } 
-        else if (response == "n" || response == "N" || response == "no")     { return PROCEED; } 
-        else if (response == "c" || response == "C" || response == "cancel") { return CANCEL; }
+    // C++ array index begin with 0, but the display index begins from 1.
+    int idx = 1;
+    for (auto &i : tasks) {
+        respondWithMessage(to_string(idx) + ": " + i.title);
+        idx++;
     }
 }
 
@@ -212,8 +182,7 @@ int TaskManager::promptToSave() {
     Prompt user to save changes before exit.
 */
 void TaskManager::exit() {
-    if (!saved && promptToSave() == CANCEL) { return; }
-    else { ::exit(0); };
+    ::exit(0);
 }
 
 // Helper methods
