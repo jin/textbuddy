@@ -14,12 +14,12 @@ using namespace std;
 #include "TaskManager.h"
 #include "boost/tokenizer.hpp"
 
-#define PROMPT_UNSAVED         "command *: "
-#define PROMPT_SAVED           "command: "
-#define HELP_MESSAGE           "available commands: help, add <task>, delete <task number>, display, clear, exit, save, reload"
-#define COMMAND_NOT_RECOGNIZED "Command not recognized. Type \"help\" to see full list of commands."
-#define UNSAVED_CHANGES        "You have unsaved changes. Do you want to save them? [y]es/[n]o/[c]ancel"
-#define DELETED_ALL_TASKS      "Deleted all tasks. Please type \"save\" to confirm."
+#define MESSAGE_PROMPT_UNSAVED         "command *: "
+#define MESSAGE_PROMPT_SAVED           "command: "
+#define MESSAGE_HELP                   "available commands: help, add <task>, delete <task number>, display, clear, exit, save, reload"
+#define MESSAGE_COMMAND_NOT_RECOGNIZED "Command not recognized. Type \"help\" to see full list of commands."
+#define MESSAGE_UNSAVED_CHANGES        "You have unsaved changes. Do you want to save them? [y]es/[n]o/[c]ancel"
+#define MESSAGE_DELETED_ALL_TASKS      "Deleted all tasks. Please type \"save\" to confirm."
 
 #define INVALID_TASK_NUMBER -1
 
@@ -50,8 +50,8 @@ void TaskManager::init() {
 void TaskManager::loop() {
     string command;
     while (true) {
-        if (saved) { cout << PROMPT_SAVED; }
-        else { cout << PROMPT_UNSAVED; };
+        if (saved) { cout << MESSAGE_PROMPT_SAVED; }
+        else { cout << MESSAGE_PROMPT_UNSAVED; };
 
         getline(cin, command);
         executeCommand(command);
@@ -78,8 +78,8 @@ void TaskManager::executeCommand(string commandLine) {
     else if (command == "reload")  { loadFromFile(); } 
     else if (command == "add")     { add(extractTaskTitleFromTokens(tokens)); } 
     else if (command == "delete")  { del(extractTaskNumberFromTokens(tokens)); } 
-    else if (command == "help")    { respondWithMessage(HELP_MESSAGE); } 
-    else                           { respondWithMessage(COMMAND_NOT_RECOGNIZED); }
+    else if (command == "help")    { respondWithMessage(MESSAGE_HELP); } 
+    else                           { respondWithMessage(MESSAGE_COMMAND_NOT_RECOGNIZED); }
 }
 
 /**
@@ -171,7 +171,7 @@ void TaskManager::del(int taskNumber) {
 */
 void TaskManager::clear() {
     tasks.clear();
-    respondWithMessage(DELETED_ALL_TASKS);
+    respondWithMessage(MESSAGE_DELETED_ALL_TASKS);
     saved = false;
 }
 
@@ -200,7 +200,7 @@ int TaskManager::promptToSave() {
     string response;
 
     while (true) {
-        cout << UNSAVED_CHANGES << " ";  
+        cout << MESSAGE_UNSAVED_CHANGES << " ";  
         getline(cin, response);
         if      (response == "y" || response == "Y" || response == "yes")    { writeToFile(); return PROCEED; } 
         else if (response == "n" || response == "N" || response == "no")     { return PROCEED; } 
