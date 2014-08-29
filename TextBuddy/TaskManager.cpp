@@ -14,7 +14,7 @@ using namespace std;
 #include "TaskManager.h"
 #include "boost/tokenizer.hpp"
 
-#define MESSAGE_PROMPT_SAVED           "command: "
+#define MESSAGE_PROMPT                 "command: "
 #define MESSAGE_HELP                   "commands: help, add <task>, delete <task number>, display, clear, exit"
 #define MESSAGE_COMMAND_NOT_RECOGNIZED "Command not recognized. Type \"help\" to see full list of commands."
 #define MESSAGE_DELETED_ALL_TASKS      "Deleted all tasks."
@@ -47,7 +47,7 @@ void TaskManager::init() {
 void TaskManager::loop() {
     string command;
     while (true) {
-        cout << MESSAGE_PROMPT_SAVED;
+        cout << MESSAGE_PROMPT;
         getline(cin, command);
         executeCommand(command);
         writeToFile();
