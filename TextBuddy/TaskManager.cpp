@@ -39,21 +39,6 @@ void TaskManager::init() {
     loop();
 }
 
-// Private methods
-
-/**
-    The main IO loop of the program. 
-*/
-void TaskManager::loop() {
-    string command;
-    while (true) {
-        cout << MESSAGE_PROMPT;
-        getline(cin, command);
-        executeCommand(command);
-        writeToFile();
-    }
-}
-
 /**
     Tokenize and extract the command action from the command line. 
     Executes the action if it is one of the options, if not, prompt the user.
@@ -74,6 +59,22 @@ void TaskManager::executeCommand(string commandLine) {
     else if (command == "delete")  { del(extractTaskNumberFromTokens(tokens)); } 
     else if (command == "help")    { respondWithMessage(MESSAGE_HELP); } 
     else                           { respondWithMessage(MESSAGE_COMMAND_NOT_RECOGNIZED); }
+}
+
+
+// Private methods
+
+/**
+    The main IO loop of the program. 
+*/
+void TaskManager::loop() {
+    string command;
+    while (true) {
+        cout << MESSAGE_PROMPT;
+        getline(cin, command);
+        executeCommand(command);
+        writeToFile();
+    }
 }
 
 /**

@@ -23,7 +23,6 @@ private:
     std::string filename;
 
     void loop();
-    void executeCommand(std::string commandLine);
 
     void writeToFile();
     void loadFromFile();
@@ -41,5 +40,6 @@ private:
     
 public:
     TaskManager(std::string filename);
+    void executeCommand(std::string commandLine);
     void init();
 };
