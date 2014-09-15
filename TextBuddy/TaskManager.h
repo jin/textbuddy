@@ -42,4 +42,6 @@ public:
     TaskManager(std::string filename);
     void executeCommand(std::string commandLine);
     void init();
+
+	int numberOfTasks();
 };

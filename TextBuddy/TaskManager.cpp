@@ -61,6 +61,10 @@ void TaskManager::executeCommand(string commandLine) {
     else                           { respondWithMessage(MESSAGE_COMMAND_NOT_RECOGNIZED); }
 }
 
+int TaskManager::numberOfTasks() {
+	return tasks.size();
+}
+
 
 // Private methods
 

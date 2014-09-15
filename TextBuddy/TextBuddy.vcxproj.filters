@@ -5,9 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="specs">
-      <UniqueIdentifier>{f4f6588e-b3f4-466c-b190-f050fc98ffe8}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -15,9 +12,6 @@
     </ClCompile>
     <ClCompile Include="TaskManager.cpp">
       <Filter>lib</Filter>
-    </ClCompile>
-    <ClCompile Include="TaskManagerTest.cpp">
-      <Filter>specs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
