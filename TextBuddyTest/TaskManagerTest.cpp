@@ -25,6 +25,23 @@ namespace TextBuddyTest
 			taskManager.executeCommand("add buy milk");
 			Assert::AreEqual(1, taskManager.numberOfTasks());
 		}
+		
+		TEST_METHOD(DeleteTask)
+		{
+			TaskManager taskManager = TaskManager("tasks.txt");
+			taskManager.executeCommand("add buy milk");
+			taskManager.executeCommand("add walk the dog");
+			taskManager.executeCommand("delete 2");
+			Assert::AreEqual(1, taskManager.numberOfTasks());
+		}
+
+		TEST_METHOD(DeleteNonExistentTask)
+		{
+			TaskManager taskManager = TaskManager("tasks.txt");
+			taskManager.executeCommand("add buy milk");
+			taskManager.executeCommand("delete 2");
+			Assert::AreEqual(1, taskManager.numberOfTasks());
+		}
 
 
 		TEST_METHOD(LoadNonEmptyTasksFile)
@@ -42,7 +59,6 @@ namespace TextBuddyTest
 		TEST_METHOD(ClearTasks)
 		{
 			TaskManager taskManager = TaskManager("tasks.txt");
-			taskManager.executeCommand("clear");
 			taskManager.executeCommand("add buy milk");
 			taskManager.executeCommand("add walk the dog");
 			taskManager.executeCommand("clear");
@@ -53,6 +69,5 @@ namespace TextBuddyTest
 		{
 			std::remove("tasks.txt");
 		}
-
 	};
 }
