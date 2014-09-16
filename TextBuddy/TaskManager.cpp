@@ -57,6 +57,7 @@ void TaskManager::executeCommand(string commandLine) {
     else if (command == "exit")    { exit(); } 
     else if (command == "add")     { add(extractTaskTitleFromTokens(tokens)); } 
     else if (command == "delete")  { del(extractTaskNumberFromTokens(tokens)); } 
+	else if (command == "sort")    { sort(); }
     else if (command == "help")    { respondWithMessage(MESSAGE_HELP); } 
     else                           { respondWithMessage(MESSAGE_COMMAND_NOT_RECOGNIZED); }
 }
@@ -181,6 +182,13 @@ void TaskManager::display() {
         respondWithMessage(to_string(idx) + ": " + i.title);
         idx++;
     }
+}
+
+/**
+    Sort tasks in ascending alphabetical order.
+*/
+void TaskManager::sort() {
+	std::sort(tasks.begin(), tasks.end(), less_than_key());
 }
 
 /**

@@ -17,6 +17,17 @@ typedef struct Task {
     std::string title;
 } Task;
 
+struct less_than_key {
+	inline bool operator() (const Task& lhs, const Task& rhs) {
+		int result = lhs.title.compare(rhs.title);
+		if (result < 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+};
+
 class TaskManager {
 private:
     std::string filename;
@@ -30,6 +41,7 @@ private:
     void display();
     void clear();
     void exit();
+	void sort();
     void respondWithMessage(std::string message);
     void clearInput();
 

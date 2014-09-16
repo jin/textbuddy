@@ -87,7 +87,6 @@ namespace TextBuddyTest
 			{
 				Assert::AreEqual(taskManager.tasks[i].title, expected[i].title);
 			}
-
 		}
 
 		TEST_METHOD_CLEANUP(RemoveTasksFile)
