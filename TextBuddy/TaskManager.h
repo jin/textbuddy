@@ -19,7 +19,6 @@ typedef struct Task {
 
 class TaskManager {
 private:
-    std::vector<Task> tasks; // Main vector to store tasks during runtime
     std::string filename;
 
     void loop();
@@ -40,6 +39,7 @@ private:
     
 public:
     TaskManager(std::string filename);
+    std::vector<Task> tasks; // Main vector to store tasks during runtime
     void executeCommand(std::string commandLine);
     void init();
 

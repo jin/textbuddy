@@ -25,7 +25,7 @@ namespace TextBuddyTest
 			taskManager.executeCommand("add buy milk");
 			Assert::AreEqual(1, taskManager.numberOfTasks());
 		}
-		
+
 		TEST_METHOD(DeleteTask)
 		{
 			TaskManager taskManager = TaskManager("tasks.txt");
@@ -63,6 +63,31 @@ namespace TextBuddyTest
 			taskManager.executeCommand("add walk the dog");
 			taskManager.executeCommand("clear");
 			Assert::AreEqual(0, taskManager.numberOfTasks());
+		}
+
+		TEST_METHOD(SortTasks)
+		{
+			TaskManager taskManager = TaskManager("tasks.txt");
+			taskManager.executeCommand("add buy milk");
+			taskManager.executeCommand("add buy zebras");
+			taskManager.executeCommand("add solve rubik's cube");
+			taskManager.executeCommand("add yell at animals");
+			taskManager.executeCommand("add yell at people");
+			std::vector<Task> expected = taskManager.tasks;
+
+			taskManager.executeCommand("clear");
+			taskManager.executeCommand("add yell at people");
+			taskManager.executeCommand("add buy zebras");
+			taskManager.executeCommand("add buy milk");
+			taskManager.executeCommand("add solve rubik's cube");
+			taskManager.executeCommand("add yell at animals");
+			taskManager.executeCommand("sort");
+
+			for (unsigned i = 0; i < 4; i++)
+			{
+				Assert::AreEqual(taskManager.tasks[i].title, expected[i].title);
+			}
+
 		}
 
 		TEST_METHOD_CLEANUP(RemoveTasksFile)
