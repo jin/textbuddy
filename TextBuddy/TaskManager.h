@@ -18,19 +18,21 @@ typedef struct Task {
 } Task;
 
 struct less_than_key {
-	inline bool operator() (const Task& lhs, const Task& rhs) {
-		int result = lhs.title.compare(rhs.title);
-		if (result < 0) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+    inline bool operator() (const Task& lhs, const Task& rhs) {
+        int result = lhs.title.compare(rhs.title);
+        if (result < 0) {
+             return true;
+        } else {
+             return false;
+        }
+    }
 };
 
 class TaskManager {
 private:
     std::string filename;
+    std::vector<Task> tasks; // Main vector to store tasks during runtime
+	std::vector<Task> latestSearchResult;
 
     void loop();
 
@@ -39,19 +41,24 @@ private:
     void add(std::string title);
     void del(int id);
     void display();
+	void displaySearchResult();
     void clear();
     void exit();
-	void sort();
+    void sort();
+	void search(std::string searchString);
     void respondWithMessage(std::string message);
     void clearInput();
 
+    std::string extractSearchStringFromTokens(std::vector<std::string> tokens);
     std::string extractTaskTitleFromTokens(std::vector<std::string> tokens);
     int extractTaskNumberFromTokens(std::vector<std::string> tokens);
     std::vector<std::string> tokenize(std::string s);
     
 public:
     TaskManager(std::string filename);
-    std::vector<Task> tasks; // Main vector to store tasks during runtime
+
+    std::vector<Task> getTasks();
+	std::vector<Task> getLatestSearchResult();
     void executeCommand(std::string commandLine);
     void init();
 

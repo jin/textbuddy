@@ -73,7 +73,7 @@ namespace TextBuddyTest
 			taskManager.executeCommand("add solve rubik's cube");
 			taskManager.executeCommand("add yell at animals");
 			taskManager.executeCommand("add yell at people");
-			std::vector<Task> expected = taskManager.tasks;
+			std::vector<Task> expected = taskManager.getTasks();
 
 			taskManager.executeCommand("clear");
 			taskManager.executeCommand("add yell at people");
@@ -85,7 +85,31 @@ namespace TextBuddyTest
 
 			for (unsigned i = 0; i < 4; i++)
 			{
-				Assert::AreEqual(taskManager.tasks[i].title, expected[i].title);
+				Assert::AreEqual(taskManager.getTasks()[i].title, expected[i].title);
+			}
+		}
+
+		TEST_METHOD(SearchTasks)
+		{
+			TaskManager taskManager = TaskManager("tasks.txt");
+			taskManager.executeCommand("add get expected result");
+			taskManager.executeCommand("add get expected score");
+			std::vector<Task> expected = taskManager.getTasks();
+
+
+			taskManager.executeCommand("clear");
+			taskManager.executeCommand("add buy milk");
+			taskManager.executeCommand("add buy zebras");
+			taskManager.executeCommand("add get expected result");
+			taskManager.executeCommand("add get expected score");
+			taskManager.executeCommand("add solve rubik's cube");
+			taskManager.executeCommand("search expected");
+			std::vector<Task> actual = taskManager.getLatestSearchResult();
+
+			Assert::AreEqual(expected.size(), actual.size());
+			for (unsigned i = 0; i < actual.size(); i++)
+			{
+				Assert::AreEqual(expected[i].title, actual[i].title);
 			}
 		}
 

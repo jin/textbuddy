@@ -39,6 +39,10 @@ void TaskManager::init() {
     loop();
 }
 
+vector<Task> TaskManager::getTasks() {
+    return tasks;
+}
+
 /**
     Tokenize and extract the command action from the command line. 
     Executes the action if it is one of the options, if not, prompt the user.
@@ -57,13 +61,18 @@ void TaskManager::executeCommand(string commandLine) {
     else if (command == "exit")    { exit(); } 
     else if (command == "add")     { add(extractTaskTitleFromTokens(tokens)); } 
     else if (command == "delete")  { del(extractTaskNumberFromTokens(tokens)); } 
-	else if (command == "sort")    { sort(); }
+    else if (command == "sort")    { sort(); }
+	else if (command == "search")  { search(extractSearchStringFromTokens(tokens)); }
     else if (command == "help")    { respondWithMessage(MESSAGE_HELP); } 
     else                           { respondWithMessage(MESSAGE_COMMAND_NOT_RECOGNIZED); }
 }
 
 int TaskManager::numberOfTasks() {
 	return tasks.size();
+}
+
+vector<Task> TaskManager::getLatestSearchResult() {
+    return latestSearchResult;
 }
 
 
@@ -188,7 +197,38 @@ void TaskManager::display() {
     Sort tasks in ascending alphabetical order.
 */
 void TaskManager::sort() {
-	std::sort(tasks.begin(), tasks.end(), less_than_key());
+    std::sort(tasks.begin(), tasks.end(), less_than_key());
+	respondWithMessage("Sorted!");
+}
+
+/**
+	A linear search through the task vector for occurrences of the
+	search string.
+*/
+void TaskManager::search(string searchString) {
+	if (searchString.empty()) {
+		respondWithMessage("Please enter a search term.");
+		return;
+	}
+    latestSearchResult.clear();
+    for (unsigned i = 0; i < tasks.size(); i++) {
+        if (tasks[i].title.find(searchString) != string::npos) {
+            latestSearchResult.push_back(tasks[i]);
+        }
+    }
+	displaySearchResult();
+}
+
+void TaskManager::displaySearchResult() {
+    if (latestSearchResult.size() == 0) {
+        respondWithMessage("No results.");
+    } else {
+        int idx = 1;
+		for (auto &i : latestSearchResult) {
+            respondWithMessage(to_string(idx) + ": " + i.title);
+            idx++;
+        }
+    }
 }
 
 /**
@@ -253,4 +293,12 @@ vector<string>TaskManager::tokenize(string s) {
         tokens.push_back(t);
     }
     return tokens;
+}
+
+/**
+    Extract the search string from the tokens. Same functionality as 
+    extractTaskTitleFromTokens.
+*/
+string TaskManager::extractSearchStringFromTokens(vector<string> tokens) {
+	return extractTaskTitleFromTokens(tokens);
 }
