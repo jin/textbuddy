@@ -32,7 +32,7 @@ class TaskManager {
 private:
     std::string filename;
     std::vector<Task> tasks; // Main vector to store tasks during runtime
-	std::vector<Task> latestSearchResult;
+    std::vector<Task> latestSearchResult;
 
     void loop();
 
@@ -41,11 +41,11 @@ private:
     void add(std::string title);
     void del(int id);
     void display();
-	void displaySearchResult();
+    void displaySearchResult();
     void clear();
     void exit();
     void sort();
-	void search(std::string searchString);
+    void search(std::string searchString);
     void respondWithMessage(std::string message);
     void clearInput();
 
@@ -58,9 +58,9 @@ public:
     TaskManager(std::string filename);
 
     std::vector<Task> getTasks();
-	std::vector<Task> getLatestSearchResult();
+    std::vector<Task> getLatestSearchResult();
     void executeCommand(std::string commandLine);
     void init();
 
-	int numberOfTasks();
+    int numberOfTasks();
 };
