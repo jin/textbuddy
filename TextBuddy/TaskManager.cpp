@@ -15,8 +15,10 @@ using namespace std;
 #include "boost/tokenizer.hpp"
 
 #define MESSAGE_PROMPT                 "command: "
-#define MESSAGE_HELP                   "commands: help, add <task>, delete <task number>, search <search term>, sort, display, clear, exit"
-#define MESSAGE_COMMAND_NOT_RECOGNIZED "Command not recognized. Type \"help\" to see full list of commands."
+#define MESSAGE_HELP                   "commands: help, add <task>, delete <task number>, \
+                                        search <search term>, sort, display, clear, exit"
+#define MESSAGE_COMMAND_NOT_RECOGNIZED "Command not recognized. Type \"help\" to see full \
+                                        list of commands."
 #define MESSAGE_DELETED_ALL_TASKS      "Deleted all tasks."
 #define MESSAGE_INVALID_TASK_NUMBER    "Invalid task number. Please try again."
 #define MESSAGE_FILE_UNOPENABLE        "File cannot be opened."
@@ -53,7 +55,9 @@ vector<Task> TaskManager::getTasks() {
 */
 void TaskManager::executeCommand(string commandLine) {
     vector<string> tokens = tokenize(commandLine);
-    if (tokens.empty()) { return; }
+    if (tokens.empty()) { 
+        return; 
+    }
 
     // std::string does not work well with switch case.
     // See http://stackoverflow.com/questions/650162/why-switch-statement-cannot-be-applied-on-strings 
@@ -127,7 +131,9 @@ void TaskManager::writeToFile() {
 void TaskManager::loadFromFile() {
     ifstream i;
     i.open(filename);
-    if (!i.is_open()) { cerr << MESSAGE_FILE_UNOPENABLE << endl; }
+    if (!i.is_open()) { 
+        cerr << MESSAGE_FILE_UNOPENABLE << endl; 
+    }
     
     string taskTitle;
     tasks.clear();
@@ -139,7 +145,8 @@ void TaskManager::loadFromFile() {
     
     i.close();
 
-    respondWithMessage("Welcome to TextBuddy. " + filename + " is ready for use.");
+    respondWithMessage("Welcome to TextBuddy. " + 
+                        filename + " is ready for use.");
 }
 
 /**
@@ -166,7 +173,8 @@ void TaskManager::del(int taskNumber) {
         respondWithMessage(MESSAGE_INVALID_TASK_NUMBER);
         return;
     }
-    respondWithMessage("Deleting task from " + filename + ": " + tasks[taskNumber].title);
+    respondWithMessage("Deleting task from " + filename + 
+                        ": " + tasks[taskNumber].title);
     tasks.erase(tasks.begin() + taskNumber);
 }
 
@@ -222,7 +230,7 @@ void TaskManager::search(string searchString) {
 }
 
 bool TaskManager::stringFound(string str, string term) {
-	return (str.find(term) != string::npos);
+    return (str.find(term) != string::npos);
 }
 
 void TaskManager::displaySearchResult() {
@@ -254,7 +262,9 @@ void TaskManager::exit() {
     it is not specified, or if it's out of range.
 */
 int TaskManager::extractTaskNumberFromTokens(vector<string> tokens) {
-    if (tokens.size() == 1) { return INVALID_TASK_NUMBER; } 
+    if (tokens.size() == 1) { 
+        return INVALID_TASK_NUMBER; 
+    } 
 
     int taskNumber = atoi(tokens[1].c_str()) - 1;
     if (taskNumber < 0 || taskNumber >= tasks.size()) {

@@ -65,6 +65,25 @@
 // all content deleted from Tasks.txt
 //
 //-------------------------------------
+// - search <search term>
+// Search for tasks containing the search term. 
+//
+// Example:
+// command: search dog 
+// 1. walk the dog
+// 2. feed the dog
+//
+//-------------------------------------
+// - sort
+// Sort the tasks in ascending alphabetical order.
+//
+// Example:
+// command: sort 
+// 1. arrange bookshelf 
+// 2. buy milk
+// 3. cut vegetable
+//
+//-------------------------------------
 // 
 // - exit  
 // Exits the application.
@@ -121,7 +140,9 @@ int main(int argc, const char * argv[]){
     exitIfNoArguments(argc);
     
     string filename = argv[1];
-    if (!isFileCreated(filename)) { createTaskFile(filename); }
+    if (!isFileCreated(filename)) { 
+        createTaskFile(filename); 
+    }
     
     TaskManager taskManager = TaskManager(filename);
     taskManager.init();

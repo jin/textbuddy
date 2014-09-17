@@ -8,7 +8,7 @@
 //  This is the main TaskManager class that defines the methods 
 //  and variables used for task management. 
 //  
-//  CRUD, save and loading are supported.
+//  CRUD, search, sort, save and loading are supported.
 
 #include <iostream>
 #include <vector>
@@ -18,13 +18,18 @@ typedef struct Task {
     std::string title;
 } Task;
 
+// Custom comparator for tasks, used in sorting.
+// lhs < rhs iff rhs.title comes after lhs.title in terms of 
+// alphabetical order.
 struct less_than_key {
     inline bool operator() (const Task& lhs, const Task& rhs) {
         std::string lhs_title = lhs.title;
         std::string rhs_title = rhs.title;
-        std::transform(lhs_title.begin(), lhs_title.end(), lhs_title.begin(), ::toupper);
-        std::transform(rhs_title.begin(), rhs_title.end(), rhs_title.begin(), ::toupper);
-		return (lhs_title.compare(rhs_title) < 0);
+        std::transform(lhs_title.begin(), lhs_title.end(), 
+            lhs_title.begin(), ::toupper);
+        std::transform(rhs_title.begin(), rhs_title.end(), 
+            rhs_title.begin(), ::toupper);
+        return (lhs_title.compare(rhs_title) < 0);
     }
 };
 
@@ -50,18 +55,20 @@ private:
 
     bool stringFound(std::string str, std::string term);
 
-    std::string extractSearchStringFromTokens(std::vector<std::string> tokens);
-    std::string extractTaskTitleFromTokens(std::vector<std::string> tokens);
-    int extractTaskNumberFromTokens(std::vector<std::string> tokens);
+    std::string extractSearchStringFromTokens(
+        std::vector<std::string> tokens);
+    std::string extractTaskTitleFromTokens(
+        std::vector<std::string> tokens);
+    int extractTaskNumberFromTokens(
+        std::vector<std::string> tokens);
     std::vector<std::string> tokenize(std::string s);
     
 public:
     TaskManager(std::string filename);
 
+    int numberOfTasks();
     std::vector<Task> getTasks();
     std::vector<Task> getLatestSearchResult();
     void executeCommand(std::string commandLine);
     void init();
-
-    int numberOfTasks();
 };
