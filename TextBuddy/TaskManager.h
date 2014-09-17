@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 typedef struct Task {
     std::string title;
@@ -19,8 +20,13 @@ typedef struct Task {
 
 struct less_than_key {
     inline bool operator() (const Task& lhs, const Task& rhs) {
-        int result = lhs.title.compare(rhs.title);
-        if (result < 0) {
+        std::locale loc;
+        std::string lhs_title = lhs.title;
+        std::string rhs_title = rhs.title;
+        std::transform(lhs_title.begin(), lhs_title.end(), lhs_title.begin(), ::toupper);
+        std::transform(rhs_title.begin(), rhs_title.end(), rhs_title.begin(), ::toupper);
+
+        if (lhs_title.compare(rhs_title) < 0) {
              return true;
         } else {
              return false;
