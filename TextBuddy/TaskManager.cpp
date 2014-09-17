@@ -15,11 +15,14 @@ using namespace std;
 #include "boost/tokenizer.hpp"
 
 #define MESSAGE_PROMPT                 "command: "
-#define MESSAGE_HELP                   "commands: help, add <task>, delete <task number>, display, clear, exit"
+#define MESSAGE_HELP                   "commands: help, add <task>, delete <task number>, search <search term>, sort, display, clear, exit"
 #define MESSAGE_COMMAND_NOT_RECOGNIZED "Command not recognized. Type \"help\" to see full list of commands."
 #define MESSAGE_DELETED_ALL_TASKS      "Deleted all tasks."
 #define MESSAGE_INVALID_TASK_NUMBER    "Invalid task number. Please try again."
 #define MESSAGE_FILE_UNOPENABLE        "File cannot be opened."
+#define MESSAGE_MISSING_SEARCH_STRING  "Please enter a search term."
+#define MESSAGE_MISSING_TASK_TITLE     "Please enter a task."
+#define MESSAGE_SORTED                 "Sorted!"
 
 #define INVALID_TASK_NUMBER -1
 
@@ -74,7 +77,6 @@ int TaskManager::numberOfTasks() {
 vector<Task> TaskManager::getLatestSearchResult() {
     return latestSearchResult;
 }
-
 
 // Private methods
 
@@ -145,7 +147,7 @@ void TaskManager::loadFromFile() {
 */
 void TaskManager::add(string title) {
     if (title.empty()) {
-        respondWithMessage("Please enter a task.");
+        respondWithMessage(MESSAGE_MISSING_TASK_TITLE);
         return;
     }
 
@@ -198,7 +200,7 @@ void TaskManager::display() {
 */
 void TaskManager::sort() {
     std::sort(tasks.begin(), tasks.end(), less_than_key());
-    respondWithMessage("Sorted!");
+    respondWithMessage(MESSAGE_SORTED);
 }
 
 /**
@@ -207,16 +209,20 @@ void TaskManager::sort() {
 */
 void TaskManager::search(string searchString) {
     if (searchString.empty()) {
-        respondWithMessage("Please enter a search term.");
+        respondWithMessage(MESSAGE_MISSING_SEARCH_STRING);
         return;
     }
     latestSearchResult.clear();
     for (unsigned i = 0; i < tasks.size(); i++) {
-        if (tasks[i].title.find(searchString) != string::npos) {
+        if (stringFound(tasks[i].title, searchString)) {
             latestSearchResult.push_back(tasks[i]);
         }
     }
     displaySearchResult();
+}
+
+bool TaskManager::stringFound(string str, string term) {
+	return (str.find(term) != string::npos);
 }
 
 void TaskManager::displaySearchResult() {
@@ -249,7 +255,6 @@ void TaskManager::exit() {
 */
 int TaskManager::extractTaskNumberFromTokens(vector<string> tokens) {
     if (tokens.size() == 1) { return INVALID_TASK_NUMBER; } 
-
 
     int taskNumber = atoi(tokens[1].c_str()) - 1;
     if (taskNumber < 0 || taskNumber >= tasks.size()) {

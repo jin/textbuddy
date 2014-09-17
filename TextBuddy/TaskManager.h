@@ -37,11 +37,10 @@ struct less_than_key {
 class TaskManager {
 private:
     std::string filename;
-    std::vector<Task> tasks; // Main vector to store tasks during runtime
+    std::vector<Task> tasks;
     std::vector<Task> latestSearchResult;
 
     void loop();
-
     void writeToFile();
     void loadFromFile();
     void add(std::string title);
@@ -50,10 +49,12 @@ private:
     void displaySearchResult();
     void clear();
     void exit();
-    void sort();
+    void sort(); // Sort by ascending alphabetical order.
     void search(std::string searchString);
     void respondWithMessage(std::string message);
     void clearInput();
+
+    bool stringFound(std::string str, std::string term);
 
     std::string extractSearchStringFromTokens(std::vector<std::string> tokens);
     std::string extractTaskTitleFromTokens(std::vector<std::string> tokens);
